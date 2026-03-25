@@ -14,9 +14,18 @@ jobs:
 
     - name: Set up Theos
       run: |
-        bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
-        echo "THEOS=~/theos" >> $GITHUB_ENV
+        export THEOS=~/theos
+        # Theos-ni yuklab olish
+        git clone --recursive https://github.com/theos/theos.git $THEOS
         
+        # SDK-ni qo'lda yuklash (GitHub API xatosidan qochish uchun)
+        mkdir -p $THEOS/sdks
+        curl -LO https://github.com/theos/sdks/raw/master/iPhoneOS14.5.sdk.tar.xz
+        tar -xvf iPhoneOS14.5.sdk.tar.xz -C $THEOS/sdks
+        rm iPhoneOS14.5.sdk.tar.xz
+        
+        echo "THEOS=$THEOS" >> $GITHUB_ENV
+
     - name: Build Package
       run: |
         export THEOS=~/theos
