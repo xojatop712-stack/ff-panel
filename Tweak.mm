@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Menu.h"
-
+#import "KittyMemory/MemoryPatch.hpp"
 @interface Menu ()
 
 @property (assign, nonatomic) CGPoint lastMenuLocation;
