@@ -1,5 +1,9 @@
-name "Ted2's Mod Menu Template v1.0.1"
-prompt FILTER "Bundle filter" "com.company.appname"
-constrain file "control" to package
-constrain "theos" to link_theos
-
+Package: com.xojatop.geminipanel
+Name: FF Gemini Panel
+Depends: mobilesubstrate
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Free Fire Mod Menu Panel
+Maintainer: xojatop
+Author: xojatop
+Section: Tweaks
