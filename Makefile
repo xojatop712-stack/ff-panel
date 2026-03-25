@@ -8,8 +8,8 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = FF_Gemini_Panel
 
-# Bu yerda hamma fayllarni asosiy joydan qidirishni ko'rsatdik
-FF_Gemini_Panel_FILES = Tweak.mm $(wildcard *.m) $(wildcard *.cpp) SCLAlertView/SCLAlertView.m
+# Papka nomlarisiz, faqat fayllarni o'zini qidiradigan qildik
+FF_Gemini_Panel_FILES = Tweak.mm $(wildcard *.m) $(wildcard *.cpp)
 
 FF_Gemini_Panel_CFLAGS = -fobjc-arc -I./
 FF_Gemini_Panel_FRAMEWORKS = UIKit Foundation Security QuartzCore CoreGraphics CoreText
