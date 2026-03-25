@@ -7,7 +7,7 @@
 //
 
 #import "UIKit/UIKit.h"
-#import "KittyMemory/MemoryPatch.hpp"
+#import "MemoryPatch.hpp"
 #import "SCLAlertView/SCLAlertView.h"
 
 #import <vector>
