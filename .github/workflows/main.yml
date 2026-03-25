@@ -12,23 +12,27 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install Dependencies
+      run: |
+        brew install ldid xz
+
     - name: Set up Theos
       run: |
         export THEOS=~/theos
         git clone --recursive https://github.com/theos/theos.git $THEOS
         
-        # SDKni boshqa usulda yuklab olish va ochish
+        # SDK yuklash
         mkdir -p $THEOS/sdks
         curl -L https://github.com/theos/sdks/raw/master/iPhoneOS14.5.sdk.tar.xz -o iPhoneOS14.5.sdk.tar.xz
-        
-        # Bu yerda formatni aniq ko'rsatib ochamiz
-        xz -d < iPhoneOS14.5.sdk.tar.xz | tar -xvf - -C $THEOS/sdks
+        tar -xJf iPhoneOS14.5.sdk.tar.xz -C $THEOS/sdks
         
         echo "THEOS=$THEOS" >> $GITHUB_ENV
 
     - name: Build Package
       run: |
         export THEOS=~/theos
+        # Tozalab yuboramiz va qayta yig'amiz
+        make clean
         make package FINALPACKAGE=1
         
     - name: Upload Artifact
