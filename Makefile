@@ -1,31 +1,17 @@
+export THEOS_DEVICE_IP = 127.0.0.1
+export THEOS_DEVICE_PORT = 2222
+
 ARCHS = arm64
-DEBUG = 0
-FINALPACKAGE = 1
-FOR_RELEASE = 1
-
-# Ogohlantirishlarni xato deb hisoblamaslik uchun
-IGNORE_WARNINGS = 1
-
-# Windows/PC-da ishlayotganingiz uchun buni 0 qiling
-MOBILE_THEOS = 0
+TARGET = iphone:clang:latest:14.5
 
 include $(THEOS)/makefiles/common.mk
 
-# Panelingizning nomi
 TWEAK_NAME = FF_Gemini_Panel
 
-# Kerakli tizim kutubxonalari
-FF_Gemini_Panel_FRAMEWORKS = UIKit Foundation Security QuartzCore CoreGraphics CoreText
+# BU YERDA FAYL NOMINI TWEAK.MM QILDIK
+FF_Gemini_Panel_FILES = Tweak.mm $(wildcard SCLAlertView/*.m) $(wildcard KittyMemory/*.cpp)
 
-# Loyihangizdagi barcha fayllarni birga yig'ish
-# Diqqat: tweak.mm faylingiz nomi aynan shunday bo'lishi kerak
-FF_Gemini_Panel_FILES = Tweak.mm Menu.mm $(wildcard SCLAlertView/*.m) $(wildcard KittyMemory/*.cpp)
-
-# Kompilyatsiya sozlamalari
 FF_Gemini_Panel_CFLAGS = -fobjc-arc
-FF_Gemini_Panel_CCFLAGS = -std=c++11 -fno-rtti -fno-exceptions -DNDEBUG
-
-# Substrate kutubxonasini ulash
-FF_Gemini_Panel_LIBRARIES += substrate
+FF_Gemini_Panel_FRAMEWORKS = UIKit Foundation Security QuartzCore CoreGraphics CoreText
 
 include $(THEOS_MAKE_PATH)/tweak.mk
