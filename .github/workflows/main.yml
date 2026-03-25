@@ -15,14 +15,14 @@ jobs:
     - name: Set up Theos
       run: |
         export THEOS=~/theos
-        # Theos-ni yuklab olish
         git clone --recursive https://github.com/theos/theos.git $THEOS
         
-        # SDK-ni qo'lda yuklash (GitHub API xatosidan qochish uchun)
+        # SDKni boshqa usulda yuklab olish va ochish
         mkdir -p $THEOS/sdks
-        curl -LO https://github.com/theos/sdks/raw/master/iPhoneOS14.5.sdk.tar.xz
-        tar -xvf iPhoneOS14.5.sdk.tar.xz -C $THEOS/sdks
-        rm iPhoneOS14.5.sdk.tar.xz
+        curl -L https://github.com/theos/sdks/raw/master/iPhoneOS14.5.sdk.tar.xz -o iPhoneOS14.5.sdk.tar.xz
+        
+        # Bu yerda formatni aniq ko'rsatib ochamiz
+        xz -d < iPhoneOS14.5.sdk.tar.xz | tar -xvf - -C $THEOS/sdks
         
         echo "THEOS=$THEOS" >> $GITHUB_ENV
 
