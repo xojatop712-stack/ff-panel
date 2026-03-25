@@ -8,7 +8,7 @@
 
 #import "UIKit/UIKit.h"
 #import "MemoryPatch.hpp"
-#import "SCLAlertView/SCLAlertView.h"
+#import "SCLAlertView.h"
 
 #import <vector>
 #import <initializer_list>
