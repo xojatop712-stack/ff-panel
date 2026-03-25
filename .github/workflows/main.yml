@@ -1,0 +1,29 @@
+name: Build Gemini Panel
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Theos
+      run: |
+        bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+        echo "THEOS=~/theos" >> $GITHUB_ENV
+        
+    - name: Build Package
+      run: |
+        export THEOS=~/theos
+        make package FINALPACKAGE=1
+        
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Gemini-Panel-Deb
+        path: packages/*.deb
