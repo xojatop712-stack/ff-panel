@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Menu.h"
-#import "KittyMemory/MemoryPatch.hpp"
+#import "MemoryPatch.hpp"
 
 @interface Menu ()
 
