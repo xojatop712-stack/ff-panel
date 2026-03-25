@@ -21,17 +21,16 @@ jobs:
         export THEOS=~/theos
         git clone --recursive https://github.com/theos/theos.git $THEOS
         
-        # SDK yuklash
+        # SDKlarni ishonchli manbadan yuklab olish (bu usul xato bermaydi)
         mkdir -p $THEOS/sdks
-        curl -L https://github.com/theos/sdks/raw/master/iPhoneOS14.5.sdk.tar.xz -o iPhoneOS14.5.sdk.tar.xz
-        tar -xJf iPhoneOS14.5.sdk.tar.xz -C $THEOS/sdks
+        git clone https://github.com/theos/sdks.git ~/sdks
+        cp -r ~/sdks/iPhoneOS14.5.sdk $THEOS/sdks/
         
         echo "THEOS=$THEOS" >> $GITHUB_ENV
 
     - name: Build Package
       run: |
         export THEOS=~/theos
-        # Tozalab yuboramiz va qayta yig'amiz
         make clean
         make package FINALPACKAGE=1
         
