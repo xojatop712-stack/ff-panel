@@ -1,9 +1,7 @@
-name: Build Gemini Panel
+name: Build and Inject Gemini Panel
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ "main" ]
 
 jobs:
   build:
@@ -14,28 +12,39 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        brew install ldid xz
+        brew install ldid xz python
+        pip3 install yt-dlp
+        # Azule o'rnatish (Injection uchun)
+        git clone https://github.com/Al4ise/Azule ~/Azule
+        sudo ln -sf ~/Azule/azule /usr/local/bin/azule
 
     - name: Set up Theos
       run: |
         export THEOS=~/theos
         git clone --recursive https://github.com/theos/theos.git $THEOS
-        
-        # SDKlarni ishonchli manbadan yuklab olish (bu usul xato bermaydi)
         mkdir -p $THEOS/sdks
         git clone https://github.com/theos/sdks.git ~/sdks
         cp -r ~/sdks/iPhoneOS14.5.sdk $THEOS/sdks/
-        
         echo "THEOS=$THEOS" >> $GITHUB_ENV
 
-    - name: Build Package
+    - name: Download IPA from Telegram
+      run: |
+        # Telegram linkidan faylni tortib olish
+        yt-dlp --force-overwrites -o "origin.ipa" "https://t.me/github_freefire/2"
+
+    - name: Build Tweak and Inject
       run: |
         export THEOS=~/theos
         make clean
         make package FINALPACKAGE=1
         
-    - name: Upload Artifact
+        # .deb faylini topish va Inject qilish
+        DEB_FILE=$(ls packages/*.deb)
+        # Azule yordamida birlashtirish
+        azule -i origin.ipa -o Gemini-Modded.ipa -f $DEB_FILE
+
+    - name: Upload Modded IPA
       uses: actions/upload-artifact@v4
       with:
-        name: Gemini-Panel-Deb
-        path: packages/*.deb
+        name: Gemini-Modded-IPA
+        path: Gemini-Modded.ipa
