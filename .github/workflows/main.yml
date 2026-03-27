@@ -29,7 +29,7 @@ jobs:
       run: |
         FILE_ID="1CFeFXg5fNvNZS91SR-OP2abbVprSF_j_"
         
-        # Google Drive Virus Scan ogohlantirishini chetlab o'tish
+        # Google Drive Virus Scan ogohlantirishini chetlab o'tish uchun maxsus script
         curl -c /tmp/cookies.txt -sL "https://docs.google.com/uc?export=download&id=${FILE_ID}" > /dev/null
         CONFIRM=$(curl -b /tmp/cookies.txt -sL "https://docs.google.com/uc?export=download&id=${FILE_ID}" | grep -o 'confirm=[^&]*' | head -1)
         curl -b /tmp/cookies.txt -L "https://docs.google.com/uc?export=download&${CONFIRM}&id=${FILE_ID}" -o origin.ipa
@@ -49,10 +49,10 @@ jobs:
         make clean
         make package FINALPACKAGE=1
         
-        # .deb faylini topish
+        # .deb faylini aniqlash
         DEB_FILE=$(ls packages/*.deb | head -n 1)
         
-        # Azule orqali IPA ichiga inject qilish
+        # Azule yordamida IPA ichiga inject qilish
         # -o . (nuqta) joriy papkaga saqlashni bildiradi
         azule -i origin.ipa -f "$DEB_FILE" -o . -v
         
