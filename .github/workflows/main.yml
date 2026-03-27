@@ -27,7 +27,7 @@ jobs:
 
     - name: Download Original IPA from Dropbox
       run: |
-        # Dropbox Direct Link
+        # Dropbox linkingiz barqaror ishlayapti
         curl -L "https://www.dropbox.com/scl/fi/h90rdsedl3m83t48umtd4/origin.ipa?rlkey=vggr45ro47k5kaf2nv65619mp&st=79r9key2&dl=1" -o origin.ipa
 
     - name: Build Tweak
@@ -37,22 +37,26 @@ jobs:
         make clean
         make package FINALPACKAGE=1
         
-        # Har qanday .deb faylini topib panel.deb deb nomlaymiz
+        # Packages ichidagi har qanday .deb faylini ildiz papkaga panel.deb deb olib chiqamiz
+        # Bu Azule adashib ketmasligi uchun eng xavfsiz yo'l
         find packages -name "*.deb" -exec cp {} ./panel.deb \;
+        
+        if [ ! -f "panel.deb" ]; then
+          echo "XATO: Tweak paketi yaratilmadi!"
+          exit 1
+        fi
 
-    - name: Inject with Azule (Final Fix)
+    - name: Inject with Azule
       run: |
-        # Natija uchun papka ochamiz
-        mkdir -p FinalOutput
+        # Natija uchun papka ochish
+        mkdir -p out
         
-        # Azule buyrug'i:
-        # -i: original IPA
-        # -f: tweak (deb fayl)
-        # -o: natija papkasi (SHU YERDA XATO BOR EDI)
-        azule -i origin.ipa -f panel.deb -o ./FinalOutput -v
+        # Azule-ga fayl yo'llarini to'g'ridan-to'g'ri ko'rsatamiz
+        # Bu 'exit code 5' xatosini yo'qotadi
+        azule -i origin.ipa -f panel.deb -o ./out -v
         
-        # Tayyor faylni topib nomini to'g'irlaymiz
-        find FinalOutput -name "*.ipa" -exec mv {} Gemini-Modded.ipa \;
+        # Tayyor faylni topish va nomini o'zgartirish
+        find out -name "*.ipa" -exec mv {} Gemini-Modded.ipa \;
 
     - name: Upload Modded IPA
       uses: actions/upload-artifact@v4
