@@ -25,9 +25,16 @@ jobs:
         cp -r ~/sdks/iPhoneOS14.5.sdk $THEOS/sdks/
         echo "THEOS=$THEOS" >> $GITHUB_ENV
 
-    - name: Download Original IPA
+    - name: Download Original IPA from Google Drive
       run: |
-        curl -L "https://store9.gofile.io/download/web/f5c4f794-ec20-4e03-aeee-e6c374a216be/origin.ipa" -o origin.ipa
+        # Sizning Google Drive ID raqamingiz o'rnatildi
+        DRIVE_ID="1CFeFXg5fNvNZS91SR-OP2abbVprSF_j_"
+        
+        # Google Drive-dan katta fayllarni to'g'ridan-to'g'ri yuklash
+        curl -L "https://docs.google.com/uc?export=download&id=${DRIVE_ID}" -o origin.ipa
+        
+        # Fayl yuklanganini tekshirish
+        ls -lh origin.ipa
 
     - name: Build Tweak and Inject
       run: |
@@ -35,13 +42,13 @@ jobs:
         make clean
         make package FINALPACKAGE=1
         
-        # .deb faylini aniq topish
+        # .deb faylini aniqlash
         DEB_FILE=$(ls packages/*.deb | head -n 1)
         
-        # Azule-ga chiqish papkasini (-o) va fayl nomini aniq ko'rsatdik
+        # Azule yordamida panelni o'yinga joylash
         azule -i origin.ipa -f "$DEB_FILE" -o . -v
         
-        # Azule odatda fayl nomini o'zgartiradi, shuni to'g'irlaymiz
+        # Tayyor fayl nomini to'g'irlash
         mv *.ipa Gemini-Modded.ipa
 
     - name: Upload Modded IPA
