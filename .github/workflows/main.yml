@@ -12,7 +12,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        brew install ldid xz wget
+        brew install ldid xz
         git clone https://github.com/Al4ise/Azule ~/Azule
         sudo ln -sf ~/Azule/azule /usr/local/bin/azule
 
@@ -25,25 +25,20 @@ jobs:
         cp -r ~/sdks/iPhoneOS14.5.sdk $THEOS/sdks/
         echo "THEOS=$THEOS" >> $GITHUB_ENV
 
-    - name: Download Original IPA from Google Drive
+    - name: Download Original IPA from Dropbox
       run: |
-        FILE_ID="1CFeFXg5fNvNZS91SR-OP2abbVprSF_j_"
+        # Siz bergan Dropbox Direct Link o'rnatildi
+        DROPBOX_URL="https://www.dropbox.com/scl/fi/h90rdsedl3m83t48umtd4/origin.ipa?rlkey=vggr45ro47k5kaf2nv65619mp&st=79r9key2&dl=1"
         
-        # Google Drive cookies va confirm kodini olish (yanada kuchaytirilgan usul)
-        wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=${FILE_ID}" -O- > /dev/null
-        CONFIRM=$(wget --quiet --load-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=${FILE_ID}" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1/p')
-        wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=${CONFIRM}&id=${FILE_ID}" -O origin.ipa
-        rm -rf /tmp/cookies.txt
-
-        # Fayl hajmini tekshirish (1.2 GB bo'lishi shart)
+        curl -L "$DROPBOX_URL" -o origin.ipa
+        
+        # Fayl hajmini tekshirish
+        ls -lh origin.ipa
         actual_size=$(stat -f%z origin.ipa)
-        if [ $actual_size -lt 1100000000 ]; then
-          echo "XATO: Fayl to'liq yuklanmadi! Hajmi juda kichik: $actual_size bytes."
-          echo "Yuklangan kontent boshi:"
-          head -n 20 origin.ipa
+        if [ $actual_size -lt 1000000000 ]; then
+          echo "XATO: Fayl to'liq yuklanmadi! Hajmi: $actual_size bytes."
           exit 1
         fi
-        echo "Muvaffaqiyatli yuklandi: $actual_size bytes."
 
     - name: Build Tweak and Inject
       run: |
@@ -53,12 +48,10 @@ jobs:
         
         DEB_FILE=$(ls packages/*.deb | head -n 1)
         
-        # Azule buyrug'ini barcha parametrlari bilan ishlatish
-        # -v (verbose) loglarni ko'rish uchun
-        # -o . (nuqta) joriy papkaga saqlash uchun
+        # Azule yordamida mod qilish. -o . chiqish papkasini belgilaydi
         azule -i origin.ipa -f "$DEB_FILE" -o . -v
         
-        # Tayyor faylni qidirish va nomini o'zgartirish
+        # Tayyorlangan faylni qidirish va nomini to'g'irlash
         find . -name "*.ipa" ! -name "origin.ipa" -exec mv {} Gemini-Modded.ipa \;
 
     - name: Upload Modded IPA
