@@ -12,9 +12,8 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        brew install ldid xz python
-        pip3 install yt-dlp
-        # Azule o'rnatish (Injection uchun)
+        brew install ldid xz
+        # Azule o'rnatish
         git clone https://github.com/Al4ise/Azule ~/Azule
         sudo ln -sf ~/Azule/azule /usr/local/bin/azule
 
@@ -27,10 +26,10 @@ jobs:
         cp -r ~/sdks/iPhoneOS14.5.sdk $THEOS/sdks/
         echo "THEOS=$THEOS" >> $GITHUB_ENV
 
-    - name: Download IPA from Telegram
+    - name: Download Original IPA
       run: |
-        # Telegram linkidan faylni tortib olish
-        yt-dlp --force-overwrites -o "origin.ipa" "https://t.me/github_freefire/2"
+        # Siz bergan GoFile linki:
+        curl -L "https://store9.gofile.io/download/web/f5c4f794-ec20-4e03-aeee-e6c374a216be/origin.ipa" -o origin.ipa
 
     - name: Build Tweak and Inject
       run: |
@@ -38,9 +37,10 @@ jobs:
         make clean
         make package FINALPACKAGE=1
         
-        # .deb faylini topish va Inject qilish
+        # .deb faylini topish
         DEB_FILE=$(ls packages/*.deb)
-        # Azule yordamida birlashtirish
+        
+        # Azule yordamida panelni IPA ichiga joylash
         azule -i origin.ipa -o Gemini-Modded.ipa -f $DEB_FILE
 
     - name: Upload Modded IPA
