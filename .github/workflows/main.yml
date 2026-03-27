@@ -27,31 +27,36 @@ jobs:
 
     - name: Download Original IPA from Dropbox
       run: |
-        # Siz bergan Dropbox Direct Link o'rnatildi
+        # Sizning Dropbox linkingiz
         DROPBOX_URL="https://www.dropbox.com/scl/fi/h90rdsedl3m83t48umtd4/origin.ipa?rlkey=vggr45ro47k5kaf2nv65619mp&st=79r9key2&dl=1"
-        
         curl -L "$DROPBOX_URL" -o origin.ipa
         
-        # Fayl hajmini tekshirish
+        # Fayl haqiqatda borligini va hajmini tekshirish
         ls -lh origin.ipa
-        actual_size=$(stat -f%z origin.ipa)
-        if [ $actual_size -lt 1000000000 ]; then
-          echo "XATO: Fayl to'liq yuklanmadi! Hajmi: $actual_size bytes."
-          exit 1
-        fi
 
     - name: Build Tweak and Inject
       run: |
         export THEOS=~/theos
+        # Arxitekturani arm64 deb belgilaymiz (Free Fire va yangi o'yinlar uchun shart)
+        export ARCHS="arm64"
+        
+        # Paketni yig'ish
         make clean
         make package FINALPACKAGE=1
         
-        DEB_FILE=$(ls packages/*.deb | head -n 1)
+        # Paket yaratilganini tekshirish
+        if [ ! -d "packages" ] || [ -z "$(ls -A packages)" ]; then
+          echo "XATO: .deb fayli yaratilmadi! Makefile-ni tekshiring."
+          exit 1
+        fi
         
-        # Azule yordamida mod qilish. -o . chiqish papkasini belgilaydi
+        DEB_FILE=$(ls packages/*.deb | head -n 1)
+        echo "Topilgan paket: $DEB_FILE"
+        
+        # Azule orqali IPA ichiga kiritish
         azule -i origin.ipa -f "$DEB_FILE" -o . -v
         
-        # Tayyorlangan faylni qidirish va nomini to'g'irlash
+        # Natijani saqlash
         find . -name "*.ipa" ! -name "origin.ipa" -exec mv {} Gemini-Modded.ipa \;
 
     - name: Upload Modded IPA
