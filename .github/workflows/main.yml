@@ -27,33 +27,32 @@ jobs:
 
     - name: Download Original IPA from Dropbox
       run: |
-        DROPBOX_URL="https://www.dropbox.com/scl/fi/h90rdsedl3m83t48umtd4/origin.ipa?rlkey=vggr45ro47k5kaf2nv65619mp&st=79r9key2&dl=1"
-        curl -L "$DROPBOX_URL" -o origin.ipa
-        ls -lh origin.ipa
+        # Dropbox linkingiz 100% ishlamoqda
+        curl -L "https://www.dropbox.com/scl/fi/h90rdsedl3m83t48umtd4/origin.ipa?rlkey=vggr45ro47k5kaf2nv65619mp&st=79r9key2&dl=1" -o origin.ipa
 
-    - name: Build Tweak and Inject
+    - name: Build Tweak
       run: |
         export THEOS=~/theos
         export ARCHS="arm64"
-        
         make clean
         make package FINALPACKAGE=1
         
-        # .deb faylini topish va Azule-ga to'g'ri yo'lni ko'rsatish
-        DEB_PATH=$(find packages -name "*.deb" | head -n 1)
+        # Har qanday .deb faylini ildiz papkaga panel.deb nomi bilan olib chiqamiz
+        find packages -name "*.deb" -exec cp {} ./panel.deb \;
         
-        if [ -z "$DEB_PATH" ]; then
+        if [ ! -f "panel.deb" ]; then
           echo "XATO: .deb fayli yaratilmadi!"
           exit 1
         fi
+
+    - name: Inject with Azule (Manual Path)
+      run: |
+        # Azule-ga fayllarni aniq ko'rsatamiz
+        # -i (ipa), -f (file/deb), -o (output directory)
+        azule -i origin.ipa -f panel.deb -o ./output -v
         
-        echo "Ishlatilayotgan paket: $DEB_PATH"
-        
-        # Azule orqali inject qilish
-        azule -i origin.ipa -f "$DEB_PATH" -o . -v
-        
-        # Natijani saqlash
-        find . -name "*.ipa" ! -name "origin.ipa" -exec mv {} Gemini-Modded.ipa \;
+        # Tayyor faylni topish va nomini to'g'irlash
+        mv output/*.ipa Gemini-Modded.ipa
 
     - name: Upload Modded IPA
       uses: actions/upload-artifact@v4
