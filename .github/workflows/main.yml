@@ -13,7 +13,6 @@ jobs:
     - name: Install Dependencies
       run: |
         brew install ldid xz
-        # Azule o'rnatish
         git clone https://github.com/Al4ise/Azule ~/Azule
         sudo ln -sf ~/Azule/azule /usr/local/bin/azule
 
@@ -28,7 +27,6 @@ jobs:
 
     - name: Download Original IPA
       run: |
-        # Siz bergan GoFile linki:
         curl -L "https://store9.gofile.io/download/web/f5c4f794-ec20-4e03-aeee-e6c374a216be/origin.ipa" -o origin.ipa
 
     - name: Build Tweak and Inject
@@ -37,11 +35,14 @@ jobs:
         make clean
         make package FINALPACKAGE=1
         
-        # .deb faylini topish
-        DEB_FILE=$(ls packages/*.deb)
+        # .deb faylini aniq topish
+        DEB_FILE=$(ls packages/*.deb | head -n 1)
         
-        # Azule yordamida panelni IPA ichiga joylash
-        azule -i origin.ipa -o Gemini-Modded.ipa -f $DEB_FILE
+        # Azule-ga chiqish papkasini (-o) va fayl nomini aniq ko'rsatdik
+        azule -i origin.ipa -f "$DEB_FILE" -o . -v
+        
+        # Azule odatda fayl nomini o'zgartiradi, shuni to'g'irlaymiz
+        mv *.ipa Gemini-Modded.ipa
 
     - name: Upload Modded IPA
       uses: actions/upload-artifact@v4
