@@ -27,7 +27,7 @@ jobs:
 
     - name: Download Original IPA from Dropbox
       run: |
-        # Dropbox linkingiz 100% ishlamoqda
+        # Dropbox Direct Link
         curl -L "https://www.dropbox.com/scl/fi/h90rdsedl3m83t48umtd4/origin.ipa?rlkey=vggr45ro47k5kaf2nv65619mp&st=79r9key2&dl=1" -o origin.ipa
 
     - name: Build Tweak
@@ -37,22 +37,22 @@ jobs:
         make clean
         make package FINALPACKAGE=1
         
-        # Har qanday .deb faylini ildiz papkaga panel.deb nomi bilan olib chiqamiz
+        # Har qanday .deb faylini topib panel.deb deb nomlaymiz
         find packages -name "*.deb" -exec cp {} ./panel.deb \;
-        
-        if [ ! -f "panel.deb" ]; then
-          echo "XATO: .deb fayli yaratilmadi!"
-          exit 1
-        fi
 
-    - name: Inject with Azule (Manual Path)
+    - name: Inject with Azule (Final Fix)
       run: |
-        # Azule-ga fayllarni aniq ko'rsatamiz
-        # -i (ipa), -f (file/deb), -o (output directory)
-        azule -i origin.ipa -f panel.deb -o ./output -v
+        # Natija uchun papka ochamiz
+        mkdir -p FinalOutput
         
-        # Tayyor faylni topish va nomini to'g'irlash
-        mv output/*.ipa Gemini-Modded.ipa
+        # Azule buyrug'i:
+        # -i: original IPA
+        # -f: tweak (deb fayl)
+        # -o: natija papkasi (SHU YERDA XATO BOR EDI)
+        azule -i origin.ipa -f panel.deb -o ./FinalOutput -v
+        
+        # Tayyor faylni topib nomini to'g'irlaymiz
+        find FinalOutput -name "*.ipa" -exec mv {} Gemini-Modded.ipa \;
 
     - name: Upload Modded IPA
       uses: actions/upload-artifact@v4
